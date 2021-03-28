@@ -1,26 +1,30 @@
 <script>
 //fetching Courses API
 var primaryUrl = "https://script.google.com/macros/s/AKfycbxMBCUOzy9Y5Ko6jOwnYLkSxznDj61kdpoTE8hAvLtbSWt0dDQsix1S/exec";
+var secondaryUrl = "http://sssc.york.ac.uk/api/courses";
 var href = window.location.href;
 var coursesData = [];
 
 window.addEventListener('DOMContentLoaded', function() {
     //Try fetching from Google API
     try {
+        console.log('Fetching course information via Google');
         fetch(primaryUrl)
         .then(res => res.json())
         .then(data => initiateForm(data));
     }
     catch (e){
-        try {
         //Try fetching via uoy server
-
-        //TODO
+        console.log('Cannot fetch via Google, trying via UOY');
+        try {
+            fetch(secondaryUrl)
+            .then(res => res.json())
+            .then(data => initiateForm(data));
         }
+        //Log error
         catch(e){
-
-        //Error: enter manual mode
-            //TODO
+            console.log('Cannot fetch courses data');
+            //TODO: enter manual mode
         }
     }
 
