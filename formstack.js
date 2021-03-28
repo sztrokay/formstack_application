@@ -1,32 +1,58 @@
 <script>
 //fetching Courses API
 var primaryUrl = "https://script.google.com/macros/s/AKfycbxMBCUOzy9Y5Ko6jOwnYLkSxznDj61kdpoTE8hAvLtbSWt0dDQsix1S/exec";
-var secondaryUrl = "http://sssc.york.ac.uk/api/courses";
+var secondaryUrl = "https://sssc.york.ac.uk/api/courses";
 var href = window.location.href;
 var coursesData = [];
 
 window.addEventListener('DOMContentLoaded', function() {
     //Try fetching from Google API
-    try {
-        console.log('Fetching course information via Google');
-        fetch(primaryUrl)
-        .then(res => res.json())
-        .then(data => initiateForm(data));
-    }
-    catch (e){
+
+    console.log('Fetching course information via Google');
+    fetch(primaryUrl)
+    .then(res => res.json())
+    .then(data => initiateForm(data))
+    .catch(error => {
         //Try fetching via uoy server
         console.log('Cannot fetch via Google, trying via UOY');
-        try {
-            fetch(secondaryUrl)
-            .then(res => res.json())
-            .then(data => initiateForm(data));
-        }
-        //Log error
-        catch(e){
-            console.log('Cannot fetch courses data');
-            //TODO: enter manual mode
-        }
-    }
+        fetch(secondaryUrl)
+        .then(res => res.json())
+        .then(data => initiateForm(data))
+        .catch(error => {
+            //Log error
+            console.log('Cannot fetch courses data, trying manual mode');
+            //Record course code and course name from query
+            if (href.match(/Select%20course=/)){
+                var courseCodeFromQuery = href.split('Select%20course=')[1]
+                if (courseCodeFromQuery.match(/&/)){
+                    courseCodeFromQuery = courseCodeFromQuery.split('&')[0]
+                    console.log('Course code found');
+                }
+            }
+            else{
+                var courseCodeFromQuery = null;
+            }
+            if (href.match(/Course%20name=/)){    
+                var courseNameFromQuery = decodeURI(href.split('Course%20name=')[1]);
+                if (courseNameFromQuery.match(/&/)){
+                    courseNameFromQuery = courseNameFromQuery.split('&')[0]
+                    console.log('Course name found');
+                }
+            }
+            else{
+                var courseNameFromQuery = null;
+            }
+            var select = document.getElementById('field103015942');
+            select.remove(0);
+            var option = document.createElement("option");
+            option.text=courseNameFromQuery;
+            option.value=courseCodeFromQuery;
+            select.add(option)
+            document.getElementById('fsRow4174512-11').style.display = "none";//hide course name
+            document.getElementById('fsRow4174512-12').style.display = "none";//hide start date
+            document.getElementById('fsRow4174512-13').style.display = "none";//hide end date
+        });
+    });
 
     //Execute after fetch
     function initiateForm(data){
@@ -115,7 +141,7 @@ window.addEventListener('DOMContentLoaded', function() {
             else{
                 var element = document.getElementById('field103015935_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
 
             //Campus
@@ -123,12 +149,12 @@ window.addEventListener('DOMContentLoaded', function() {
             if (campus == true){
                 element = document.getElementById('field103015936_1');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             else{
                 element = document.getElementById('field103015936_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             
             //AM/PM
@@ -136,24 +162,24 @@ window.addEventListener('DOMContentLoaded', function() {
             if (ampm == true){
                 element = document.getElementById('field103015940_1');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             else{
                 element = document.getElementById('field103015940_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             //Combined accommodation
             
             if (homestay == true || campus == true){
                 element = document.getElementById('field103015934_1');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             else{
                 element = document.getElementById('field103015934_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             
             //Individual Payment
@@ -161,31 +187,31 @@ window.addEventListener('DOMContentLoaded', function() {
             if (indivPay == true){
                 element = document.getElementById('field103015937_1');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             else{
                 element = document.getElementById('field103015937_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             
             //Course type
-            var type = courseFromQuery.type
+            var type = courseFromQuery.type;
             element = document.getElementById('field103015938');
             element.value = type;
-            element.dispatchEvent(event)
+            element.dispatchEvent(event);
             
             //Scholarships
             var scholarship = courseFromQuery.scholarship
             if (scholarship == true){
                 element = document.getElementById('field103015939_1');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
             else{
                 element = document.getElementById('field103015939_2');
                 element.checked = true;
-                element.dispatchEvent(event)
+                element.dispatchEvent(event);
             }
 
             var partner = courseFromQuery.partner//Partner university
