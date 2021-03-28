@@ -40,7 +40,12 @@ window.addEventListener('DOMContentLoaded', function() {
                 }
             }
             else{
-                var courseNameFromQuery = null;
+                if (courseCodeFromQuery){
+                    var courseNameFromQuery = 'Course code: ' +courseCodeFromQuery;
+                }
+                else {
+                    var courseNameFromQuery = 'No course available at the moment'
+                }
             }
             var select = document.getElementById('field103015942');
             select.remove(0);
@@ -48,9 +53,11 @@ window.addEventListener('DOMContentLoaded', function() {
             option.text=courseNameFromQuery;
             option.value=courseCodeFromQuery;
             select.add(option)
+
             document.getElementById('fsRow4174512-11').style.display = "none";//hide course name
             document.getElementById('fsRow4174512-12').style.display = "none";//hide start date
             document.getElementById('fsRow4174512-13').style.display = "none";//hide end date
+            manualFill();
         });
     });
 
@@ -122,7 +129,6 @@ window.addEventListener('DOMContentLoaded', function() {
         var courseFromQuery = data.find(function(courseFromQuery){
             return courseFromQuery.code == courseCodeFromQuery;
         });
-        //Debug: log if course code was found
         //If course was found based on query, get its details and select form options using those
         if (courseCodeFromQuery){
             //Hide dropdown field
@@ -349,5 +355,111 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function manualFill(){
+    //Initiate change event type for despatch later
+    var event = new Event('change');
 
+    //Homestay
+
+    var homestay = href.split('homestay=')[1]
+    if (homestay.match(/&/)){
+        homestay = homestay.split('&')[0]
+    }
+    if (homestay && homestay == "TRUE"){
+        var element = document.getElementById('field103015935_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        var element = document.getElementById('field103015935_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+
+    //Campus
+    var campus = href.split('campus=')[1]
+    if (campus.match(/&/)){
+        campus = campus.split('&')[0]
+    }
+    if (campus && campus == "TRUE"){
+        element = document.getElementById('field103015936_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        element = document.getElementById('field103015936_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    
+    //AM/PM
+    var ampm = href.split('ampm=')[1]
+    if (ampm.match(/&/)){
+        ampm = ampm.split('&')[0]
+    }
+    if (ampm && ampm == "TRUE"){
+        element = document.getElementById('field103015940_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        element = document.getElementById('field103015940_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    //Combined accommodation
+    
+    if (homestay == "TRUE" || campus == "TRUE"){
+        element = document.getElementById('field103015934_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        element = document.getElementById('field103015934_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    
+    //Individual Payment
+    var indivPay = href.split('individualPayment=')[1]
+    if (indivPay.match(/&/)){
+        indivPay = indivPay.split('&')[0]
+    }
+    if (indivPay && indivPay == "TRUE"){
+        element = document.getElementById('field103015937_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        element = document.getElementById('field103015937_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    
+    //Course type
+    var type = decodeURI(href.split('type=')[1]);
+    
+    if (type.match(/&/)){
+        type = type.split('&')[0]
+    }
+    element = document.getElementById('field103015938');
+    element.value = type;
+    element.dispatchEvent(event);
+    
+    //Scholarships
+    var scholarship = href.split('scholarships=')[1]
+    if (scholarship.match(/&/)){
+        scholarship = scholarship.split('&')[0]
+    }
+    if (scholarship && scholarship == "TRUE"){
+        element = document.getElementById('field103015939_1');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+    else{
+        element = document.getElementById('field103015939_2');
+        element.checked = true;
+        element.dispatchEvent(event);
+    }
+}
 </script>
