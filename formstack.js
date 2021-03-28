@@ -130,7 +130,7 @@ window.addEventListener('DOMContentLoaded', function() {
             return courseFromQuery.code == courseCodeFromQuery;
         });
         //If course was found based on query, get its details and select form options using those
-        if (courseCodeFromQuery){
+        if (courseFromQuery){
             //Hide dropdown field
             document.getElementById('fsRow4174512-10').style.display = "none";
             var courseName = courseFromQuery.name; //Course name
