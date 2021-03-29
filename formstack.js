@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', function() {
         .then(res => res.json())
         .then(data => initiateForm(data))
         .catch(error => {
-            //Log error
+            //MANUAL MODE
             console.log('Cannot fetch courses data, trying manual mode');
             //Record course code and course name from query
             if (href.match(/Select%20course=/)){
@@ -61,7 +61,7 @@ window.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    //Execute after fetch
+    //AUTOFILL MODE
     function initiateForm(data){
 
         //Initiate change event type for despatch later
@@ -100,6 +100,15 @@ window.addEventListener('DOMContentLoaded', function() {
             if (courseCodeFromQuery.match(/&/)){
                 courseCodeFromQuery = courseCodeFromQuery.split('&')[0]
             }
+            //Select the course based on the query
+            var courseFromQuery = data.find(function(courseFromQuery){
+                return courseFromQuery.code == courseCodeFromQuery;
+            });
+            if (!courseFromQuery){
+                coursesData = data.filter(function(course){
+                    return course.partner === "N/a";
+                });  
+            }
         }
         else{
             var courseCodeFromQuery = null;
@@ -125,10 +134,7 @@ window.addEventListener('DOMContentLoaded', function() {
             select.add(option);
         }
 
-        //Select the course based on the query
-        var courseFromQuery = data.find(function(courseFromQuery){
-            return courseFromQuery.code == courseCodeFromQuery;
-        });
+
         //If course was found based on query, get its details and select form options using those
         if (courseFromQuery){
             //Hide dropdown field
