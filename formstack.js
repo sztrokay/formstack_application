@@ -1,69 +1,44 @@
 <script>
 //fetching Courses API
-var primaryUrl = "https://script.google.com/macros/s/AKfycbxMBCUOzy9Y5Ko6jOwnYLkSxznDj61kdpoTE8hAvLtbSWt0dDQsix1S/exec";
-var secondaryUrl = "https://sssc.york.ac.uk/api/courses";
+var primaryUrl = "https://8bxi1poaqj.execute-api.eu-west-1.amazonaws.com/sssc/sssc-courses"
+var secondaryUrl = "https://script.google.com/macros/s/AKfycbzG-rJapGn5WwiCSW19exulOGSZipNRwGG1H75wP-RxRnJjP7DoQig5lSlqhdlzjmFr/exec";
 var href = window.location.href;
 var coursesData = [];
 
 window.addEventListener('DOMContentLoaded', function() {
     //Try fetching from Google API
 
-    console.log('Fetching course information via Google');
+    console.log('Fetching course information via AWS');
     fetch(primaryUrl)
     .then(res => res.json())
-    .then(data => initiateForm(data))
+    .then(data => initiateForm(data.body))
     .catch(error => {
         //Try fetching via uoy server
-        console.log('Cannot fetch via Google, trying via UOY');
+        console.log('Cannot fetch via AWS, trying via Google');
         fetch(secondaryUrl)
         .then(res => res.json())
         .then(data => initiateForm(data))
         .catch(error => {
-            //MANUAL MODE
-            console.log('Cannot fetch courses data, trying manual mode');
-            //Record course code and course name from query
-            if (href.match(/Select%20course=/)){
-                var courseCodeFromQuery = href.split('Select%20course=')[1]
-                if (courseCodeFromQuery.match(/&/)){
-                    courseCodeFromQuery = courseCodeFromQuery.split('&')[0]
-                    console.log('Course code found');
-                }
-            }
-            else{
-                var courseCodeFromQuery = null;
-            }
-            if (href.match(/Course%20name=/)){    
-                var courseNameFromQuery = decodeURI(href.split('Course%20name=')[1]);
-                if (courseNameFromQuery.match(/&/)){
-                    courseNameFromQuery = courseNameFromQuery.split('&')[0]
-                    console.log('Course name found');
-                }
-            }
-            else{
-                if (courseCodeFromQuery){
-                    var courseNameFromQuery = 'Course code: ' +courseCodeFromQuery;
-                }
-                else {
-                    var courseNameFromQuery = 'No course available at the moment'
-                }
-            }
+            //Log error in dropdown
+            
+            var errorMessage = 'No course available at the moment'
+
             var select = document.getElementById('field103015942');
             select.remove(0);
             var option = document.createElement("option");
-            option.text=courseNameFromQuery;
-            option.value=courseCodeFromQuery;
+            option.text=errorMessage;
+            option.value="";
             select.add(option)
 
             document.getElementById('fsRow4174512-11').style.display = "none";//hide course name
             document.getElementById('fsRow4174512-12').style.display = "none";//hide start date
             document.getElementById('fsRow4174512-13').style.display = "none";//hide end date
-            manualFill();
+
         });
     });
 
     //AUTOFILL MODE
     function initiateForm(data){
-
         //Initiate change event type for despatch later
         var event = new Event('change');
 
@@ -361,111 +336,4 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function manualFill(){
-    //Initiate change event type for despatch later
-    var event = new Event('change');
-
-    //Homestay
-
-    var homestay = href.split('homestay=')[1]
-    if (homestay.match(/&/)){
-        homestay = homestay.split('&')[0]
-    }
-    if (homestay && homestay == "TRUE"){
-        var element = document.getElementById('field103015935_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        var element = document.getElementById('field103015935_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-
-    //Campus
-    var campus = href.split('campus=')[1]
-    if (campus.match(/&/)){
-        campus = campus.split('&')[0]
-    }
-    if (campus && campus == "TRUE"){
-        element = document.getElementById('field103015936_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        element = document.getElementById('field103015936_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    
-    //AM/PM
-    var ampm = href.split('ampm=')[1]
-    if (ampm.match(/&/)){
-        ampm = ampm.split('&')[0]
-    }
-    if (ampm && ampm == "TRUE"){
-        element = document.getElementById('field103015940_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        element = document.getElementById('field103015940_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    //Combined accommodation
-    
-    if (homestay == "TRUE" || campus == "TRUE"){
-        element = document.getElementById('field103015934_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        element = document.getElementById('field103015934_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    
-    //Individual Payment
-    var indivPay = href.split('individualPayment=')[1]
-    if (indivPay.match(/&/)){
-        indivPay = indivPay.split('&')[0]
-    }
-    if (indivPay && indivPay == "TRUE"){
-        element = document.getElementById('field103015937_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        element = document.getElementById('field103015937_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    
-    //Course type
-    var type = decodeURI(href.split('type=')[1]);
-    
-    if (type.match(/&/)){
-        type = type.split('&')[0]
-    }
-    element = document.getElementById('field103015938');
-    element.value = type;
-    element.dispatchEvent(event);
-    
-    //Scholarships
-    var scholarship = href.split('scholarships=')[1]
-    if (scholarship.match(/&/)){
-        scholarship = scholarship.split('&')[0]
-    }
-    if (scholarship && scholarship == "TRUE"){
-        element = document.getElementById('field103015939_1');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-    else{
-        element = document.getElementById('field103015939_2');
-        element.checked = true;
-        element.dispatchEvent(event);
-    }
-}
 </script>
