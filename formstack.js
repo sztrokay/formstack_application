@@ -39,8 +39,14 @@ window.addEventListener('DOMContentLoaded', function() {
 
     //AUTOFILL MODE
     function initiateForm(data){
+        console.log("Fetch successful");
         //Initiate change event type for despatch later
         var event = new Event('change');
+        console.log(data);
+        // Filter courses data to only include ones with applications open status
+        data = data.filter(function(course){
+            return course.applicationsOpen == true;
+        })
 
         // Filter courses data based on location
 
@@ -79,10 +85,24 @@ window.addEventListener('DOMContentLoaded', function() {
             var courseFromQuery = data.find(function(courseFromQuery){
                 return courseFromQuery.code == courseCodeFromQuery;
             });
+            //If course code is extracted but does not return a match, display error.
             if (!courseFromQuery){
-                coursesData = data.filter(function(course){
-                    return course.partner === "N/a";
-                });  
+                //coursesData = data.filter(function(course){
+                    //This is the select option for courses
+                    var select = document.getElementById('field103015942');
+            
+                    //Remove "Loading" option from select
+                    select.remove(0);
+                    //Create error in dropdown
+            
+                    var option = document.createElement("option");
+                    option.value = "";
+                    option.text = "Course not found.";
+                    select.add(option);
+                    return;
+                    
+                    //return course.partner === "N/a";
+                //});  
             }
         }
         else{
